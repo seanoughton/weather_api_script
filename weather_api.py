@@ -212,3 +212,25 @@ class weatherApp():
         print('A JSON file of the location/date weather data has been generated.')
         print('Thank You! Goodbye!')
         print('')
+
+class Controller():
+    def __init__(self):
+        self.app = weatherApp()
+        self.app.userInteraction()
+        self.app.apiInteraction()
+        self.app.errorCheck()
+        self.app.databaseInteraction()
+        self.app.csvInteraction()
+        self.app.jsonInteraction()
+        self.app.printResults()
+
+def appLogic():
+    controller = Controller()
+
+    # USE THIS TO CREATE A NEW DATABASE
+    # db = DataBase()
+    # db.createDataBase()
+
+
+if __name__ == "__main__":
+    appLogic()
