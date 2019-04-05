@@ -157,3 +157,58 @@ class CSV():
             for row in c.execute('SELECT * FROM weatherdata ORDER BY created'):
                 data = dict(zip(tuple(fieldnames),row))
                 writer.writerow(data)
+
+class weatherApp():
+    def __init__(self):
+        self.ui = UserInteraction()
+        self.api = API()
+        self.database = DataBase()
+        self.csv = CSV()
+        self.json = JSON()
+        self.city = ''
+        self.date = ''
+
+    def userInteraction(self):
+        self.city = self.ui.getCity()
+        self.date = self.ui.getDate()
+
+    def checkPayload(self):
+        if self.ui.isThereWeatherData(self.api.location_day_weather_data) == False:
+            return False
+        else:
+            return True
+
+    def apiInteraction(self):
+        self.api.woied = self.ui.woied
+        self.api.user_date = self.ui.user_date
+        self.api.getLocationDayData()
+        self.api.getConsolidatedWeather()
+
+    def errorCheck(self):
+        while True:
+            if self.checkPayload() == True:
+                break
+            else:
+                print('There is no data for that location and day. Please try again')
+                self.userInteraction()
+                self.apiInteraction()
+
+    def databaseInteraction(self):
+        self.database.addToDatabase(data=self.api.location_day_weather_data,woied=self.ui.woied)
+
+    def csvInteraction(self):
+        self.csv.consolidatedWeatherToCSV(data=self.api.consolidated_weather_data,city=self.ui.city)
+        self.csv.dbToCSV(data=self.api.location_day_weather_data)
+
+    def jsonInteraction(self):
+        self.json.saveRawData(data=self.api.location_day_weather_data,city=self.ui.city)
+
+    def printResults(self):
+        for i in range(0,10):
+            print('')
+        print('The weather data has been added to the database.')
+        print('A csv file has been generated for the consolidated weather for that location.')
+        print('A csv file has been generated as a snapshot of the database.')
+        print('A JSON file of the location/date weather data has been generated.')
+        print('Thank You! Goodbye!')
+        print('')
