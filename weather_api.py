@@ -225,11 +225,11 @@ class Controller():
         self.app.printResults()
 
 def appLogic():
-    controller = Controller()
+    # controller = Controller()
 
     # USE THIS TO CREATE A NEW DATABASE
-    # db = DataBase()
-    # db.createDataBase()
+    db = DataBase()
+    db.createDataBase()
 
 
 if __name__ == "__main__":
