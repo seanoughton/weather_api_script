@@ -125,3 +125,9 @@ class DataBase():
         c.executemany('INSERT INTO weatherdata VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', weather_data)
         self.conn.commit()
         self.conn.close()
+
+
+class JSON():
+    def saveRawData(self,data,city):
+        with open(f"weather_{data[0]['applicable_date']}_{city}.json", 'w') as d:
+            json.dump(data, d, indent = 4, sort_keys = True)
