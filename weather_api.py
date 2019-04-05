@@ -83,3 +83,45 @@ class API():
         r = requests.get(url)
         data = json.loads(r.content)
         self.consolidated_weather_data = data['consolidated_weather']
+
+
+class DataBase():
+    def __init__(self,conn=''):
+        self.conn = sqlite3.connect('metaweather.db')
+
+    def createDataBase(self):
+        c = self.conn.cursor()
+        c.execute('''CREATE TABLE weatherdata
+                     (woeid integer,
+                     air_pressure text,
+                     applicable_date text,
+                     created text,
+                     humidity integer,
+                     id integer,
+                     max_temp real,
+                     min_temp real,
+                     predictability integer,
+                     the_temp real,
+                     visibility real,
+                     weather_state_abbr text,
+                     weather_state_name text,
+                     wind_direction real,
+                     wind_direction_compass text,
+                     wind_speed real)''')
+
+    def formatDataForDb(self,data,woeid):
+        formatted_data = []
+        key_list = list(sorted(data[0].keys()))
+        for item in data:
+            row = [woeid]
+            for key in key_list:
+                row.append(item[key])
+            formatted_data.append(tuple(row))
+        return formatted_data
+
+    def addToDatabase(self,data,woied):
+        c = self.conn.cursor()
+        weather_data = self.formatDataForDb(data,woied)
+        c.executemany('INSERT INTO weatherdata VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', weather_data)
+        self.conn.commit()
+        self.conn.close()
