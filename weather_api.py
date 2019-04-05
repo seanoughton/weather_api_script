@@ -62,3 +62,24 @@ class UserInteraction():
             return False
         else:
             return True
+
+
+class API():
+    def __init__(self,woied='',user_date='',location_day_weather_data=[],consolidated_weather_data=[]):
+        self.woied = woied
+        self.user_date = user_date
+        self.location_day_weather_data = location_day_weather_data
+        self.consolidated_weather_data = consolidated_weather_data
+
+    def getLocationDayData(self):
+        date_dict = {'year':self.user_date[0],'month':self.user_date[1],'day':self.user_date[2]}
+        url = f"https://www.metaweather.com/api/location/{self.woied}/{date_dict['year']}/{date_dict['month']}/{date_dict['day']}"
+        r = requests.get(url)
+        data = json.loads(r.content)
+        self.location_day_weather_data = data
+
+    def getConsolidatedWeather(self):
+        url = f"https://www.metaweather.com/api/location/{self.woied}/"
+        r = requests.get(url)
+        data = json.loads(r.content)
+        self.consolidated_weather_data = data['consolidated_weather']
