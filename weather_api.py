@@ -131,3 +131,29 @@ class JSON():
     def saveRawData(self,data,city):
         with open(f"weather_{data[0]['applicable_date']}_{city}.json", 'w') as d:
             json.dump(data, d, indent = 4, sort_keys = True)
+
+class CSV():
+    def consolidatedWeatherToCSV(self,data,city):
+        with open(f"weather_data_{data[0]['applicable_date']}_{city}.csv", mode='w') as csv_file:
+            fieldnames = list(data[0].keys())
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
+            length_data = len(data) - 1
+
+            for i in range(0,length_data):
+                row = tuple(list(data[i].values()))
+                csv_data = dict(zip(tuple(fieldnames),row))
+                writer.writerow(csv_data)
+
+    def dbToCSV(self,data):
+        conn = sqlite3.connect('metaweather.db')
+        c = conn.cursor()
+        c.execute('SELECT * FROM weatherdata LIMIT 1')
+        fieldnames = [description[0] for description in c.description]
+        today_date = str(datetime.datetime.now())[:10]
+        with open(f"database_export_{today_date}.csv", mode='w') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in c.execute('SELECT * FROM weatherdata ORDER BY created'):
+                data = dict(zip(tuple(fieldnames),row))
+                writer.writerow(data)
